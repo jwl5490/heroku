@@ -1,0 +1,29 @@
+#get_ecg
+
+install.packages("arules")
+install.packages("arulesViz")
+install.packages("car")
+library(arules)
+library(arulesViz)
+library(car)
+
+ecg<-read.transactions("downloads/sample_Electrocardiogram.csv",format="basket",sep=",", rm.duplicates=TRUE)
+rules<-apriori(ecg, parameter=list(supp=0.1, conf=0.1))
+
+plot(rules)
+
+ecg<-read.delim("downloads/sample_Electrocardiogram1.csv")
+attach(ecg)
+
+ecg.lm<-lm(QTc~birthday, data=ecg)
+residual<-ecg.lm$QTc
+
+istu.resid<-rstandard(ecg.lm)
+estu.resid<-rstandard(ecg.lm)
+
+resid.anal<-cbind(residual, istu.resid, estu.resid, hat)
+
+
+qqplot(resid.anal)
+
+summary(ecg.lm)
